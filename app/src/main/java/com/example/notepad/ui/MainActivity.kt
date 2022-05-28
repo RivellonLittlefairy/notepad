@@ -1,18 +1,17 @@
-package com.example.notepad
+package com.example.notepad.ui
 
-import android.graphics.Color
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notepad.R
 import com.example.notepad.dao.DBService
-import com.example.notepad.pojo.Affairs
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,20 +22,16 @@ class MainActivity : AppCompatActivity() {
         //初始化recyclerView
         initTitle()
         val layoutManager=LinearLayoutManager(this)
-        val adapter=TodoListAdapter(todoList)
+        val adapter= TodoListAdapter(todoList)
         val recyclerView=findViewById<RecyclerView>(R.id.todoList)
         recyclerView.layoutManager=layoutManager
         recyclerView.adapter=adapter
 
-
-        //初始化数据库
-        //DBService.addAffairs(this, Affairs(1,1,1,"213","123213123123",3))
-        DBService.deleteAffairs(this,1)
-        DBService.deleteAffairs(this,2)
-        DBService.deleteAffairs(this,3)
-        DBService.changeAffairs(this,1,0,"0","123",0)
-        val todoList1 = DBService.getTodoList(this,false)
-        Toast.makeText(this, todoList1[0].title,Toast.LENGTH_SHORT).show()
+        val fab=findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+            val intent= Intent(this,EditActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initTitle() {
@@ -58,12 +53,12 @@ class TodoListAdapter(private val todoList:List<Int>): RecyclerView.Adapter<Todo
             super.onChanged()
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoListAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.todolist_item,parent,false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: TodoListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.title.text=todoList[position].toString()
     }
 
