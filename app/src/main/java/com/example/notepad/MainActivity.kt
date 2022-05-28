@@ -8,15 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notepad.dao.DBService
+import com.example.notepad.pojo.Affairs
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    val todoList=LinkedList<Int>()
+    private val todoList=LinkedList<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //初始化recyclerView
         initTitle()
         val layoutManager=LinearLayoutManager(this)
         val adapter=TodoListAdapter(todoList)
@@ -24,6 +28,15 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager=layoutManager
         recyclerView.adapter=adapter
 
+
+        //初始化数据库
+        //DBService.addAffairs(this, Affairs(1,1,1,"213","123213123123",3))
+        DBService.deleteAffairs(this,1)
+        DBService.deleteAffairs(this,2)
+        DBService.deleteAffairs(this,3)
+        DBService.changeAffairs(this,1,0,"0","123",0)
+        val todoList1 = DBService.getTodoList(this,false)
+        Toast.makeText(this, todoList1[0].title,Toast.LENGTH_SHORT).show()
     }
 
     private fun initTitle() {
