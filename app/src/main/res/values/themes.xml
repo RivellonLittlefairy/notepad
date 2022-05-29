@@ -13,4 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!--名字自定义-->
+    <style name="CheckBoxTheme">
+        <item name="colorAccent">#990000</item><!--选中颜色-->
+        <item name="colorControlNormal">#888888</item><!--未选中颜色-->
+    </style>
 </resources>
