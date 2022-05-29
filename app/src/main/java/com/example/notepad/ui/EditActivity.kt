@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.notepad.R
 import com.example.notepad.dao.DBService
@@ -22,6 +24,9 @@ import java.util.*
 open class EditActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        //隐藏ActionBar
+        val actionBar: ActionBar? = supportActionBar
+        actionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
 
@@ -30,6 +35,8 @@ open class EditActivity : AppCompatActivity() {
         val title = findViewById<EditText>(R.id.editTitle)
         val content = findViewById<EditText>(R.id.editContent)
         val noticeTime = findViewById<EditText>(R.id.editTime)
+        val fab = findViewById<FloatingActionButton>(R.id.editFab)
+        val back=findViewById<Button>(R.id.back)
         //设置日期和时间时候，会为这个变量加一，最后值为2说明设置好了提醒日期
         var notice=0
         noticeDate.setOnTouchListener { _, event ->
@@ -48,7 +55,6 @@ open class EditActivity : AppCompatActivity() {
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 datePickerDialog.show()
-                true
             }
             false
         }
@@ -67,13 +73,11 @@ open class EditActivity : AppCompatActivity() {
                     calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
                 )
                 timePickerDialog.show()
-                true
             }
             false
         }
 
         //提交事件
-        val fab = findViewById<FloatingActionButton>(R.id.editFab)
         fab.setOnClickListener {
             val t=if (notice==2){
                 val date=noticeDate.text.toString()
@@ -86,6 +90,11 @@ open class EditActivity : AppCompatActivity() {
             val affairs=Affairs(0,intent.getIntExtra("createTime", (Date().time /1000).toInt()),(Date().time /1000).toInt(),title.text.toString(), content.text.toString(),t)
             //Toast.makeText(this,t,Toast.LENGTH_SHORT).show()
             DBService.addAffairs(this,affairs)
+        }
+
+        //返回键响应
+        back.setOnClickListener {
+            finish()
         }
     }
 

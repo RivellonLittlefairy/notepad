@@ -5,12 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.EditActivity">
+
+    <include
+        layout="@layout/edit_title"
+        android:id="@+id/head" />
     <EditText
         android:id="@+id/editTitle"
         android:maxLines="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/head"
         android:hint="添加标题"
         />
     <LinearLayout

@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notepad.R
@@ -17,7 +19,11 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private val todoList=LinkedList<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
+        //隐藏ActionBar
+        val actionBar: ActionBar? = supportActionBar
+        actionBar?.hide()
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         //初始化recyclerView
         initTitle()
