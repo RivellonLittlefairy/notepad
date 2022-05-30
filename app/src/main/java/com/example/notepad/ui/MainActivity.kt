@@ -22,6 +22,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val todoList=LinkedList<Affairs>()
+    lateinit var fab:FloatingActionButton
+    //需要根据是否进入多选模式来变化fab的图形， 因此adapter的checked必须能被外界访问
+    lateinit var adapter:TodoListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         //隐藏ActionBar
         val actionBar: ActionBar? = supportActionBar
@@ -30,36 +33,59 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         //初始化recyclerView
-        initTitle()
-        val layoutManager=LinearLayoutManager(this)
-        val adapter= TodoListAdapter(todoList)
-        val recyclerView=findViewById<RecyclerView>(R.id.todoList)
-        recyclerView.layoutManager=layoutManager
-        recyclerView.adapter=adapter
+        initAdapter()
+
 
         //增添记录的悬浮按钮，为其设置事件
-        val fab=findViewById<FloatingActionButton>(R.id.fabAdd)
+        fab=findViewById(R.id.fabAdd)
         fab.setOnClickListener {
-            val intent= Intent(this,EditActivity::class.java)
-            startActivity(intent)
+            if(adapter.checked){
+                for(i in adapter.removeList){
+                    DBService.deleteAffairs(this,i)
+                }
+                changeFabIcon()
+                adapter.checked=!adapter.checked
+                initAdapter()
+            }else{
+                val intent= Intent(this,EditActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         //设置多选删除事件
         findViewById<Button>(R.id.mainMultiSelect).setOnClickListener {
-            adapter.ischecked=!adapter.ischecked
+            changeFabIcon()
+            adapter.checked=!adapter.checked
             adapter.notifyDataSetChanged()
         }
     }
 
-    private fun initTitle() {
+    //从数据库中加载数据
+    private fun initAdapter() {
         todoList.clear()
         todoList.addAll(DBService.getTodoList(this, true))
         todoList.addAll(DBService.getTodoList(this, false))
+        adapter= TodoListAdapter(todoList)
+        val layoutManager=LinearLayoutManager(this)
+        val recyclerView=findViewById<RecyclerView>(R.id.todoList)
+        recyclerView.layoutManager=layoutManager
+        recyclerView.adapter=adapter
+    }
 
+    //点击多选按钮进入编辑模式以后，悬浮按钮变成删除功能
+    private fun changeFabIcon(){
+        if(adapter.checked) fab.setImageResource(R.drawable.add)
+        else fab.setImageResource(R.drawable.remove)
+    }
+
+    override fun onResume() {
+        initAdapter()
+        super.onResume()
     }
 }
 class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
-    var ischecked=false
+    var checked=false
+    val removeList=LinkedList<Int>()
     inner class ViewHolder(view: View):RecyclerView.ViewHolder(view){
         val title:TextView=view.findViewById(R.id.title)
         val checkBox: CheckBox =view.findViewById(R.id.checkbox)
@@ -73,13 +99,19 @@ class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(ischecked) holder.checkBox.visibility=View.VISIBLE
+        if(checked) holder.checkBox.visibility=View.VISIBLE
         else holder.checkBox.visibility=View.GONE
         holder.item.background.alpha= 150
         if(position%2==1) holder.item.setBackgroundResource(R.drawable.blue)
         holder.title.text=todoList[position].title
         holder.updateTime.text=timeStampToTime(todoList[position].updateTime)
         holder.createTime.text=timeStampToTime(todoList[position].createTime)
+
+        //设置选中删除事件，将记录id添加到List中
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked) removeList.add(todoList[position].id)
+            else removeList.remove(todoList[position].id)
+        }
     }
 
     //将数据库中的时间戳转换为显示的时间

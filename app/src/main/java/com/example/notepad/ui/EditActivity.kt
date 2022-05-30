@@ -90,6 +90,7 @@ open class EditActivity : AppCompatActivity() {
             val affairs=Affairs(0,intent.getIntExtra("createTime", (Date().time /1000).toInt()),(Date().time /1000).toInt(),title.text.toString(), content.text.toString(),t)
             //Toast.makeText(this,t,Toast.LENGTH_SHORT).show()
             DBService.addAffairs(this,affairs)
+            finish()
         }
 
         //返回键响应
