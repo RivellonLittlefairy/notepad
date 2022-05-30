@@ -42,4 +42,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     //RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 }

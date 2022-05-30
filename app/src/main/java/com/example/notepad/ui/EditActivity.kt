@@ -1,8 +1,12 @@
 package com.example.notepad.ui
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
@@ -13,9 +17,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import com.example.notepad.MyApplication
 import com.example.notepad.R
 import com.example.notepad.dao.DBService
 import com.example.notepad.pojo.Affairs
+import com.example.notepad.service.NoticeService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
@@ -87,7 +93,7 @@ open class EditActivity : AppCompatActivity() {
 
         //提交事件
         fab.setOnClickListener {
-            val t=if (notice==2){
+            val t=if (notice>=2){
                 val date=noticeDate.text.toString()
                 val time=noticeTime.text.toString()
                 val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -96,8 +102,15 @@ open class EditActivity : AppCompatActivity() {
                 Int.MAX_VALUE
             }
             val affairs=Affairs(0,intent.getIntExtra("createTime", (Date().time /1000).toInt()),(Date().time /1000).toInt(),title.text.toString(), content.text.toString(),t)
-            //Toast.makeText(this,t,Toast.LENGTH_SHORT).show()
             DBService.addAffairs(this,affairs)
+            if(t!= Int.MAX_VALUE){
+                val intent= Intent(this, NoticeService::class.java)
+                intent.putExtra("title",affairs.title)
+                intent.putExtra("content",affairs.content)
+                val pi = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+                val am = MyApplication.context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                am.set(AlarmManager.RTC_WAKEUP,t.toLong()*1000,pi)
+            }
             finish()
         }
 
