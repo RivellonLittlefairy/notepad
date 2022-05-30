@@ -1,5 +1,6 @@
 package com.example.notepad.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notepad.MyApplication
 import com.example.notepad.R
 import com.example.notepad.dao.DBService
 import com.example.notepad.pojo.Affairs
@@ -65,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         todoList.clear()
         todoList.addAll(DBService.getTodoList(this, true))
         todoList.addAll(DBService.getTodoList(this, false))
-        adapter= TodoListAdapter(todoList)
+        adapter= TodoListAdapter(this,todoList)
         val layoutManager=LinearLayoutManager(this)
         val recyclerView=findViewById<RecyclerView>(R.id.todoList)
         recyclerView.layoutManager=layoutManager
@@ -83,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 }
-class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
+class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
     var checked=false
     val removeList=LinkedList<Int>()
     inner class ViewHolder(view: View):RecyclerView.ViewHolder(view){
@@ -92,6 +96,7 @@ class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<
         val item: ConstraintLayout =view.findViewById(R.id.item)
         val updateTime: TextView =view.findViewById(R.id.updateTime)
         val createTime: TextView =view.findViewById(R.id.createTime)
+        val view:View=view
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.todolist_item,parent,false)
@@ -112,6 +117,25 @@ class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<
             if(isChecked) removeList.add(todoList[position].id)
             else removeList.remove(todoList[position].id)
         }
+
+        holder.view.setOnLongClickListener {
+            AlertDialog.Builder(context).apply {
+                setTitle("确认删除这一项？")
+                setCancelable(false)
+                setPositiveButton("删除"){ _, _ ->
+                    DBService.deleteAffairs(MyApplication.context,todoList[position].id)
+                    remove(todoList[position])
+                }
+                setNegativeButton("取消"){ _, _ ->
+                }
+                show()
+            }
+            true
+        }
+
+        holder.view.setOnClickListener {
+            Toast.makeText(MyApplication.context,"up",Toast.LENGTH_SHORT).show()
+        }
     }
 
     //将数据库中的时间戳转换为显示的时间
@@ -122,6 +146,12 @@ class TodoListAdapter(private val todoList:List<Affairs>): RecyclerView.Adapter<
 
     override fun getItemCount(): Int {
         return todoList.size
+    }
+
+    //删除一项
+    fun remove(i:Affairs){
+        todoList.remove(i)
+        notifyDataSetChanged()
     }
 
 }
