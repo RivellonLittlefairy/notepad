@@ -134,7 +134,22 @@ class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affair
         }
 
         holder.view.setOnClickListener {
-            Toast.makeText(MyApplication.context,"up",Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(context).apply {
+                setTitle(todoList[position].title)
+                setCancelable(false)
+                setMessage(todoList[position].content)
+                setPositiveButton("修改"){ _, _ ->
+                    val intent=Intent(context,EditActivity::class.java)
+                    intent.putExtra("title",todoList[position].title)
+                    intent.putExtra("content",todoList[position].content)
+                    intent.putExtra("createTime",todoList[position].createTime)
+                    intent.putExtra("noticeTime",todoList[position].noticeTime)
+                    context.startActivity(intent)
+                }
+                setNegativeButton("取消"){ _, _ ->
+                }
+                show()
+            }
         }
     }
 

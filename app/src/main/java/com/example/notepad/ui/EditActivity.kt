@@ -37,6 +37,14 @@ open class EditActivity : AppCompatActivity() {
         val noticeTime = findViewById<EditText>(R.id.editTime)
         val fab = findViewById<FloatingActionButton>(R.id.editFab)
         val back=findViewById<Button>(R.id.back)
+
+        //如果是通过编辑的方法进入，应该为标题和内容设置初始值
+        if(intent.getStringExtra("title")!=null){
+            title.text=Editable.Factory.getInstance().newEditable(intent.getStringExtra("title"))
+            content.text=Editable.Factory.getInstance().newEditable(intent.getStringExtra("content"))
+            noticeDate.hint="请重新填写提醒日期"
+        }
+
         //设置日期和时间时候，会为这个变量加一，最后值为2说明设置好了提醒日期
         var notice=0
         noticeDate.setOnTouchListener { _, event ->

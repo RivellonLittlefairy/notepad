@@ -51,6 +51,10 @@
         />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editFab"
+        app:rippleColor="@color/main"
+        android:src="@drawable/save"
+        android:tint="@color/white"
+        android:backgroundTint="@color/main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
