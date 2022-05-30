@@ -3,7 +3,7 @@
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/red"
+    android:background="@drawable/green"
     android:layout_marginTop="10dp"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:textSize="40sp"
         app:layout_constraintLeft_toRightOf="@+id/checkbox"
-        android:textColor="#0859D3"
+
+        android:textColor="#800859D3"
         app:layout_constraintTop_toTopOf="parent"/>
     <TextView
         android:layout_marginLeft="10dp"

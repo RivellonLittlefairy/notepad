@@ -2,6 +2,7 @@ package com.example.notepad.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 }
-class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
+class TodoListAdapter(private val context:Context, private val todoList:LinkedList<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
     var checked=false
     val removeList=LinkedList<Int>()
     inner class ViewHolder(view: View):RecyclerView.ViewHolder(view){
@@ -118,6 +119,7 @@ class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affair
             else removeList.remove(todoList[position].id)
         }
 
+        //长按删除弹窗
         holder.view.setOnLongClickListener {
             AlertDialog.Builder(context).apply {
                 setTitle("确认删除这一项？")
@@ -133,6 +135,7 @@ class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affair
             true
         }
 
+        //短按详情弹窗
         holder.view.setOnClickListener {
             AlertDialog.Builder(context).apply {
                 setTitle(todoList[position].title)
@@ -151,6 +154,11 @@ class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affair
                 show()
             }
         }
+
+        //如果这个任务已经过期了，标红展示
+        if((Date().time /1000).toInt()>todoList[position].noticeTime){
+            holder.title.setTextColor(Color.parseColor("#99EF0C0C"))
+        }
     }
 
     //将数据库中的时间戳转换为显示的时间
@@ -164,7 +172,7 @@ class TodoListAdapter(val context:Context,private val todoList:LinkedList<Affair
     }
 
     //删除一项
-    fun remove(i:Affairs){
+    private fun remove(i:Affairs){
         todoList.remove(i)
         notifyDataSetChanged()
     }
