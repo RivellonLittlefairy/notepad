@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notepad.MyApplication
 import com.example.notepad.R
+import com.example.notepad.Tool
 import com.example.notepad.dao.DBService
 import com.example.notepad.pojo.Affairs
 import java.text.SimpleDateFormat
@@ -40,8 +41,8 @@ class TodoListAdapter(private val context: Context, private val todoList: Linked
         holder.item.background.alpha= 150
         if(position%2==1) holder.item.setBackgroundResource(R.drawable.blue)
         holder.title.text=todoList[position].title
-        holder.updateTime.text=timeStampToTime(todoList[position].updateTime)
-        holder.createTime.text=timeStampToTime(todoList[position].createTime)
+        holder.updateTime.text=Tool.timeStampToTime(todoList[position].updateTime)
+        holder.createTime.text=Tool.timeStampToTime(todoList[position].createTime)
 
         //设置选中删除事件，将记录id添加到List中
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -51,38 +52,48 @@ class TodoListAdapter(private val context: Context, private val todoList: Linked
 
         //长按删除弹窗
         holder.view.setOnLongClickListener {
-            AlertDialog.Builder(context).apply {
-                setTitle("确认删除这一项？")
-                setCancelable(false)
-                setPositiveButton("删除"){ _, _ ->
-                    DBService.deleteAffairs(MyApplication.context,todoList[position].id)
-                    remove(todoList[position])
+            if(!checked){
+                AlertDialog.Builder(context).apply {
+                    setTitle("确认删除这一项？")
+                    setCancelable(false)
+                    setPositiveButton("删除"){ _, _ ->
+                        DBService.deleteAffairs(MyApplication.context,todoList[position].id)
+                        remove(todoList[position])
+                    }
+                    setNegativeButton("取消"){ _, _ ->
+                    }
+                    show()
                 }
-                setNegativeButton("取消"){ _, _ ->
-                }
-                show()
             }
             true
         }
 
         //短按详情弹窗
         holder.view.setOnClickListener {
-            AlertDialog.Builder(context).apply {
-                setTitle(todoList[position].title)
-                setCancelable(false)
-                val time=timeStampToTime(todoList[position].noticeTime)
-                setMessage(todoList[position].content+"\n提醒时间：$time")
-                setPositiveButton("修改"){ _, _ ->
-                    val intent= Intent(context,EditActivity::class.java)
-                    intent.putExtra("title",todoList[position].title)
-                    intent.putExtra("content",todoList[position].content)
-                    intent.putExtra("createTime",todoList[position].createTime)
-                    intent.putExtra("noticeTime",todoList[position].noticeTime)
-                    context.startActivity(intent)
+            if(checked){
+                holder.checkBox.isChecked=!holder.checkBox.isChecked
+            }else{
+                AlertDialog.Builder(context).apply {
+                    setTitle(todoList[position].title)
+                    setCancelable(false)
+                    var time="暂无提醒时间"
+                    if(todoList[position].noticeTime!=Int.MAX_VALUE){
+                        time= Tool.timeStampToTime(todoList[position].noticeTime)
+                    }
+                    setMessage(todoList[position].content+"\n提醒时间：$time")
+                    setPositiveButton("修改"){ _, _ ->
+                        val intent= Intent(context,EditActivity::class.java)
+                        intent.putExtra("title",todoList[position].title)
+                        intent.putExtra("id",todoList[position].id)
+                        intent.putExtra("content",todoList[position].content)
+                        intent.putExtra("createTime",todoList[position].createTime)
+                        intent.putExtra("noticeTime",todoList[position].noticeTime)
+                        context.startActivity(intent)
+                    }
+                    setNegativeButton("取消"){ _, _ ->
+                    }
+                    show()
                 }
-                setNegativeButton("取消"){ _, _ ->
-                }
-                show()
             }
         }
 
@@ -92,11 +103,6 @@ class TodoListAdapter(private val context: Context, private val todoList: Linked
         }
     }
 
-    //将数据库中的时间戳转换为显示的时间
-    private fun timeStampToTime(t:Int):String{
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        return sdf.format(Date(java.lang.String.valueOf(t).toLong()*1000)) // 时间戳转换成时间
-    }
 
     override fun getItemCount(): Int {
         return todoList.size
