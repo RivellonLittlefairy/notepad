@@ -20,9 +20,10 @@
     <TextView
         android:layout_marginLeft="10dp"
         android:id="@+id/title"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="40sp"
+        android:textSize="30sp"
         app:layout_constraintLeft_toRightOf="@+id/checkbox"
 
         android:textColor="#800859D3"
