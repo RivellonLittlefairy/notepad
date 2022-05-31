@@ -59,6 +59,7 @@ open class EditActivity : AppCompatActivity() {
                 val datePickerDialog = DatePickerDialog(
                     this,
                     { _, year, month, dayOfMonth ->
+                        var month=month+1
                         noticeDate.text =
                             Editable.Factory.getInstance().newEditable("$year-$month-$dayOfMonth")
                         noticeTime.visibility= View.VISIBLE
