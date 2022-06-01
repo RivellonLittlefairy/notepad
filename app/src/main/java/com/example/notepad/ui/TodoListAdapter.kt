@@ -13,10 +13,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notepad.MyApplication
 import com.example.notepad.R
-import com.example.notepad.Tool
+import com.example.notepad.tool.Tool
 import com.example.notepad.dao.DBService
 import com.example.notepad.pojo.Affairs
-import java.text.SimpleDateFormat
 import java.util.*
 
 class TodoListAdapter(private val context: Context, private val todoList: LinkedList<Affairs>): RecyclerView.Adapter<TodoListAdapter.ViewHolder>(){
@@ -41,8 +40,8 @@ class TodoListAdapter(private val context: Context, private val todoList: Linked
         holder.item.background.alpha= 150
         if(position%2==1) holder.item.setBackgroundResource(R.drawable.blue)
         holder.title.text=todoList[position].title
-        holder.updateTime.text=Tool.timeStampToTime(todoList[position].updateTime)
-        holder.createTime.text=Tool.timeStampToTime(todoList[position].createTime)
+        holder.updateTime.text= Tool.timeStampToTime(todoList[position].updateTime)
+        holder.createTime.text= Tool.timeStampToTime(todoList[position].createTime)
 
         //设置选中删除事件，将记录id添加到List中
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->

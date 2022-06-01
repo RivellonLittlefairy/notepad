@@ -4,9 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.widget.Toolbar
-import com.example.notepad.Tool
-
+import com.example.notepad.tool.Tool
+//这个Service用来接收广播，无条件被唤醒发送通知
 class NoticeService : Service(){
     override fun onBind(intent: Intent?): IBinder? {
         return Binder()

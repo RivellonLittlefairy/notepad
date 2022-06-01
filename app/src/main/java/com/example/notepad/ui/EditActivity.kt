@@ -19,7 +19,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.notepad.MyApplication
 import com.example.notepad.R
-import com.example.notepad.Tool
+import com.example.notepad.tool.Tool
 import com.example.notepad.dao.DBService
 import com.example.notepad.pojo.Affairs
 import com.example.notepad.service.NoticeService

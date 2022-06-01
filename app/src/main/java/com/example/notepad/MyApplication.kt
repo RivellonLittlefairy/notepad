@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 
 class MyApplication:Application() {
+    //全局获取context
     companion object{
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
